@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .form-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group input[type="date"] {
+            padding: 8px;
+        }
+        .form-group input:read-only {
+            background-color: #f9f9f9;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Client Form</h2>
+        <form method="post" action="" name="contact-form">
+            <div class="form-group">
+                <label for="serialNumber">Serial Number</label>
+                <input type="number" id="serialNumber" name="serialNumber" required>
+            </div>
+            <div class="form-group">
+                <label for="clientName">Client Name</label>
+                <input type="text" id="clientName" name="clientName" required>
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" required>
+            </div>
+            <div class="form-group">
+                <label for="softwareName">Software Name</label>
+                <select id="softwareName" name="softwareName" required>
+                    <option value="" disabled selected>Select Software</option>
+                    <option value="genius">Genius</option>
+                    <option value="genit">GenIT</option>
+                    <option value="gentds">GenTDS</option>
+                    <option value="gengst">GenGST</option>
+                    <option value="genbal">GenBal</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="softwareAmount">Software Amount</label>
+                <input type="text" id="softwareAmount" name="softwareAmount" readonly>
+            </div>
+            <div class="form-group">
+                <label for="lan">LAN</label>
+                <select id="lan" name="lan" required>
+                    <option value="" disabled selected>Select LAN</option>
+                    <option value="lan">LAN</option>
+                    <option value="lenit">LENIT</option>
+                    <option value="lentds">LENTDS</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="lanAmount">LAN Amount</label>
+                <input type="text" id="lanAmount" name="lanAmount" readonly>
+            </div>
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Mapping software to their respective amounts
+        const softwarePrices = {
+            genius: 5000,
+            genit: 4000,
+            gentds: 3000,
+            gengst: 4500,
+            genbal: 3500
+        };
+
+        // Mapping LAN options to their respective amounts
+        const lanPrices = {
+            lan: 1000,
+            lenit: 1500,
+            lentds: 2000
+        };
+
+        // Update software amount on selection
+        document.getElementById('softwareName').addEventListener('change', function () {
+            const selectedSoftware = this.value;
+            const amountField = document.getElementById('softwareAmount');
+            amountField.value = softwarePrices[selectedSoftware] || '';
+        });
+
+        // Update LAN amount on selection
+        document.getElementById('lan').addEventListener('change', function () {
+            const selectedLan = this.value;
+            const lanAmountField = document.getElementById('lanAmount');
+            lanAmountField.value = lanPrices[selectedLan] || '';
+        });
+
+        // Submit form data to Google Sheets
+        // document.getElementById('clientForm').addEventListener('submit', function (e) {
+        //     e.preventDefault(); 
+
+        //     const formData = new FormData(this);
+        //     const data = {};
+        //     formData.forEach((value, key) => {
+        //         data[key] = value;
+        //     });
+
+        //     fetch('https://script.google.com/macros/s/AKfycbyzNWo6z-Ddd6F6LiCx9pI795SQG6wFqiodXtaoQU-YIdTHu1X5EVbJETCgE0vpzUDlyw/exec', {
+        //         method: 'POST',
+        //         body: JSON.stringify(data),
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         }
+        //     })
+        //     .then(response => response.json())
+        //     .then(result => {
+        //         alert('Data saved successfully!');
+        //         this.reset(); // Reset form
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //         alert('Failed to save data. Please try again.');
+        //     });
+        // });
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxz23BobOl8lbHN1q6foAnkdM3aKGYMQj4X5DmqLqx4WD6dTHRzceDsndn8g5HnznHRJA/exec'
+
+const form = document.forms['contact-form']
+
+form.addEventListener('submit', e => {
+  
+  e.preventDefault()
+  
+  fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+  .then(response => alert("Thank you! Form is submitted" ))
+  .then(() => { window.location.reload(); })
+  .catch(error => console.error('Error!', error.message))
+})
+    </script>
+</body>
+</html>
