@@ -17,11 +17,10 @@
         }
         .form-container {
             background: #fff;
-            padding: 20px;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
+            width: 800px;
         }
         .form-container h2 {
             margin-bottom: 20px;
@@ -29,26 +28,33 @@
             color: #333;
         }
         .form-group {
+            display: flex;
+            align-items: center;
             margin-bottom: 15px;
         }
         .form-group label {
-            display: block;
-            margin-bottom: 5px;
+            width: 30%;
             font-weight: bold;
         }
         .form-group input,
         .form-group select {
-            width: 100%;
-            padding: 10px;
+            width: 65%;
+            padding: 8px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 14px;
         }
-        .form-group input[type="date"] {
-            padding: 8px;
-        }
-        .form-group input:read-only {
+        .form-group input[readonly] {
             background-color: #f9f9f9;
+        }
+        .form-group.split {
+            justify-content: space-between;
+        }
+        .form-group.split input {
+            width: calc(30% - 10px);
+        }
+        .form-group.split input:nth-child(3) {
+            text-align: center;
         }
         .form-group button {
             width: 100%;
@@ -63,6 +69,13 @@
         .form-group button:hover {
             background-color: #0056b3;
         }
+        .remark-date {
+            display: flex;
+            justify-content: space-between;
+        }
+        .remark-date .form-group {
+            width: 48%;
+        }
     </style>
 </head>
 <body>
@@ -70,8 +83,8 @@
         <h2>Client Form</h2>
         <form method="post" action="" name="contact-form">
             <div class="form-group">
-                <label for="serialNumber">Serial Number</label>
-                <input type="number" id="serialNumber" name="serialNumber" required>
+                <label for="serialNumber">Sr. no.</label>
+                <input type="text" id="serialNumber" name="serialNumber"  required>
             </div>
             <div class="form-group">
                 <label for="clientName">Client Name</label>
@@ -96,22 +109,25 @@
                 <label for="softwareAmount">Software Amount</label>
                 <input type="text" id="softwareAmount" name="softwareAmount" readonly>
             </div>
-            <div class="form-group">
-                <label for="lan">LAN</label>
-                <select id="lan" name="lan" required>
-                    <option value="" disabled selected>Select LAN</option>
-                    <option value="lan">LAN</option>
-                    <option value="lenit">LENIT</option>
-                    <option value="lentds">LENTDS</option>
-                </select>
+            <div class="form-group split">
+                <label for="lanNumber">Lan Number</label>
+                <input type="number" id="lanNumber" name="lanNumber" value="1" min="1">
+                <span>X</span>
+                <input type="text" id="lanAmount" name="lanAmount" value="590" readonly>
             </div>
             <div class="form-group">
-                <label for="lanAmount">LAN Amount</label>
-                <input type="text" id="lanAmount" name="lanAmount" readonly>
+                <label for="totalLanAmount">Lan Amount</label>
+                <input type="text" id="totalLanAmount" name="totalLanAmount" readonly>
             </div>
-            <div class="form-group">
-                <label for="date">Date</label>
-                <input type="date" id="date" name="date" required>
+            <div class="remark-date">
+                <div class="form-group">
+                    <label for="remark">Remark</label>
+                    <input type="text" id="remark" name="remark" required>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
             </div>
             <div class="form-group">
                 <button type="submit">Submit</button>
@@ -129,13 +145,6 @@
             genbal: 3500
         };
 
-        // Mapping LAN options to their respective amounts
-        const lanPrices = {
-            lan: 1000,
-            lenit: 1500,
-            lentds: 2000
-        };
-
         // Update software amount on selection
         document.getElementById('softwareName').addEventListener('change', function () {
             const selectedSoftware = this.value;
@@ -143,16 +152,22 @@
             amountField.value = softwarePrices[selectedSoftware] || '';
         });
 
-        // Update LAN amount on selection
-        document.getElementById('lan').addEventListener('change', function () {
-            const selectedLan = this.value;
-            const lanAmountField = document.getElementById('lanAmount');
-            lanAmountField.value = lanPrices[selectedLan] || '';
-        });
+        // Update LAN total amount on number change
+        const lanNumberField = document.getElementById('lanNumber');
+        const lanAmountField = document.getElementById('lanAmount');
+        const totalLanAmountField = document.getElementById('totalLanAmount');
+
+        function updateLanTotal() {
+            const lanNumber = parseInt(lanNumberField.value) || 1;
+            const lanAmount = parseFloat(lanAmountField.value) || 0;
+            totalLanAmountField.value = lanNumber * lanAmount;
+        }
+
+        lanNumberField.addEventListener('input', updateLanTotal);
 
         // Submit form data to Google Sheets
         // document.getElementById('clientForm').addEventListener('submit', function (e) {
-        //     e.preventDefault(); 
+        //     e.preventDefault(); // Prevent form submission
 
         //     const formData = new FormData(this);
         //     const data = {};
@@ -160,7 +175,7 @@
         //         data[key] = value;
         //     });
 
-        //     fetch('https://script.google.com/macros/s/AKfycbyzNWo6z-Ddd6F6LiCx9pI795SQG6wFqiodXtaoQU-YIdTHu1X5EVbJETCgE0vpzUDlyw/exec', {
+        //     fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
         //         method: 'POST',
         //         body: JSON.stringify(data),
         //         headers: {
